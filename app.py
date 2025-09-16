@@ -9,15 +9,24 @@ import time
 #Connect spreadsheet
 
 # Define the scope (permissions) and authenticate
-scope = ["https://spreadsheets.google.com/feeds",
-         "https://www.googleapis.com/auth/drive"]
-# Load service account from environment variable
-service_account_info = json.loads(os.environ["GCP_SERVICE_ACCOUNT"])
-# Fix private_key formatting
-service_account_info["private_key"] = service_account_info["private_key"].replace("\\n", "\n")
+scope = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive"
+]
 
-creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
+if os.path.exists("pengirimannasional-test-edfb24e2f048.json"):
+    # Local: read from file
+    creds = ServiceAccountCredentials.from_json_keyfile_name(
+        "pengirimannasional-test-edfb24e2f048.json", scope
+    )
+else:
+    # Deployment: read from environment variable
+    sa_info = json.loads(os.environ["GCP_SERVICE_ACCOUNT"])
+    sa_info["private_key"] = sa_info["private_key"].replace("\\n", "\n")
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_info, scope)
+
 client = gspread.authorize(creds)
+
 
 #Open all table then convert to dataframe
 user_sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/1mUbmJGAEABhCqjfH7F2Jzb5JkhMSfucl2uVTiLV7Jls/edit?gid=0#gid=0').sheet1
