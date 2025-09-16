@@ -11,7 +11,12 @@ import time
 # Define the scope (permissions) and authenticate
 scope = ["https://spreadsheets.google.com/feeds",
          "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("pengirimannasional-test-edfb24e2f048.json", scope)
+# Load service account from environment variable
+service_account_info = json.loads(os.environ["GCP_SERVICE_ACCOUNT"])
+# Fix private_key formatting
+service_account_info["private_key"] = service_account_info["private_key"].replace("\\n", "\n")
+
+creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
 client = gspread.authorize(creds)
 
 #Open all table then convert to dataframe
