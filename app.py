@@ -9,24 +9,30 @@ import time
 #Connect spreadsheet
 
 # Define the scope (permissions) and authenticate
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
+
 scope = [
     "https://spreadsheets.google.com/feeds",
     "https://www.googleapis.com/auth/drive"
 ]
 
-if os.path.exists("pengirimannasional-test-edfb24e2f048.json"):
-    # Local: read from file
-    creds = ServiceAccountCredentials.from_json_keyfile_name(
-        "pengirimannasional-test-edfb24e2f048.json", scope
-    )
-else:
-    # Deployment: read from environment variable
-    sa_info = json.loads(os.environ["GCP_SERVICE_ACCOUNT"])
-    sa_info["private_key"] = sa_info["private_key"].replace("\\n", "\n")
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(sa_info, scope)
+service_account_info = {
+  "type": "service_account",
+  "project_id": "pengirimannasional-test",
+  "private_key_id": "edfb24e2f048cb0849b01523170239875655a530",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQD1d3+dIa3pZVHY\nqdSNr7RmjE2Jj+pFDGNaqYXC/+HEUIYQ3AKNG8P+VpvwejSaEg0MPIrWPrUwlQ/U\nJyc0OnzXX3QvLIflutuR906FO7fM6VL9A67ohoXTI24dAgRsLTGJSbqvXmGJSVSE\nOI5Qp/zMU0XdYeceOpKJRz032hc4h8oGJDl/gXYfUzFhkxJzBbFElfaRrxS3Sizq\nL1C40j9q/cc2tTB9ZlIqa93n7E4b43ecO4ea1aAJIbjAL162onGwYZSv+6H7pZgC\nVmv/TUjjeD62gvaBH7PKninN5ywa2kG/EOrX7+0umlktroA+PHv6f/+ioiEQ/RD+\nyBstfmdLAgMBAAECggEAC0eL9ij7iFuPCME5Eq+tvv6Ye4dA8R5SHHLowh6m/bHj\njzfE6D4L4g6RyNmcvC2zKspHaPPluI9I9Gs+KnC7ltv8h0RpFD3jZBA0q/ukBQb9\nuMGoEmhIEv0wTKXwlRX4jkH0kaVpHvlfKFo+8+bcP3leHv+mMqXnYOaEoiHj6kWA\nESi4hvka+pszo8vtO9ZLYlxYiula14rTxB/MiEl3+7ktUxIm7G5fOoZulJjw3YF8\neIePCOPwL9XhEFD4H+JB75qiYHNpvJMyWdMIV7uXUkg84/Epm53RfnlERJpjXIb0\n2xvWZBOt5yMpyNiTvgxIf2jOBSlXlRzUa1yjxApYfQKBgQD+Q+Iba7pM5joodQG5\nJkPQdZhLikdaWq5BX7udh8/uZpB6Kk5lD+cN/OJsViIq0IF7aJAs6tYnuE1MIOz3\n7hokEVUlNhSyU6JF0SPReDF6dfzMxF906z8AIbOXxGhcy67SfXcdz0laDYQQOkhg\nKfBZfG0yDFpnZe9am+gbPr2QlwKBgQD3JD9WwsEsDYQflCeDDv88F+hhxepnySYz\ndhZOUqEhRO8acqri1xgC2779RtqMJ9y86ZU0T5oMrErOR3Gg0DxSZLo8H9rDn5pX\n1+hAGYokNgKB3pUdS6FG3jGdvJfDM/C0UbxbQjHcdrn5NoYqZaW6jfGy2uSV+AkI\nyOECTCrBbQKBgFzGljUdLMAsbWIft35AWRQyJFzD2t88IUMXVFTZnmRFpkf9Mdes\nYsl20YNoNlVa+TP3ZkwNcBDULdguV2jrxzwL2v6V6h1baOWCt0gSTDN7478vlAkM\nYVOB+I7TCqV5aJPDVfhZj1E9h0eIjKoSA3ITdaCCY2ZBCoIMSzfNv8uHAoGAMW1D\naaOrpJbTbMlhmZl/PFJ/vEYr2jPlevdMAMAPz6qMs1ppiNKBz9iI+viXrt4uDG4e\n1AZzhcNTdqvdMs9SsRvKD0pDo0ohQR5CKcex1AolODn+0owUpiq7+5MDOxwBMN8D\n77BubmwkR447CPGpUoUe6KlUfBXOIL6kGaSIDIUCgYBjBhlBWUPfcboJU5NmyVC2\ndJuId2FFUjZ0cR0fdPjjsV24k92j3ziYhWE6AHT/t+zCyuGzybnRPynA8fKIhYPH\nLrt6jqGNsR5Mqc7c2Aj/vtxHqoluBwfQqWm+jkSOcnGiBVPlet80ZVFV+V/cDzC6\nHuSyaH9FUmrt8Khbp/ikHw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "webapp-pengiriman-crud@pengirimannasional-test.iam.gserviceaccount.com",
+  "client_id": "103467583507156164729",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/webapp-pengiriman-crud%40pengirimannasional-test.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
 
+creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
 client = gspread.authorize(creds)
-
 
 #Open all table then convert to dataframe
 user_sheet = client.open_by_url('https://docs.google.com/spreadsheets/d/1mUbmJGAEABhCqjfH7F2Jzb5JkhMSfucl2uVTiLV7Jls/edit?gid=0#gid=0').sheet1
