@@ -1,0 +1,8 @@
+streamlit
+pandas
+altair
+pickleshare
+gspread
+oauth2client
+streamlit-option-menu
+openpyxl
